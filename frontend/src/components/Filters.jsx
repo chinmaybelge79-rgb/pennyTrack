@@ -1,21 +1,40 @@
+import { useCallback, useMemo } from 'react';
+
 const CATEGORIES = ['All', 'Food', 'Travel', 'Coffee', 'Books', 'Other'];
 
+/**
+ * Filters Component - Date and category filtering for expenses
+ * Refactored with improved accessibility and consistent styling
+ */
 export default function Filters({ filters, onChange }) {
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    onChange({ ...filters, [name]: value });
-  };
+    onChange((prev) => ({ ...prev, [name]: value }));
+  }, [onChange]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     onChange({ category: 'All', startDate: '', endDate: '' });
-  };
+  }, [onChange]);
 
-  const hasFilters = filters.category !== 'All' || filters.startDate || filters.endDate;
+  // Memoized derived state
+  const hasFilters = useMemo(() => 
+    filters.category !== 'All' || filters.startDate || filters.endDate,
+    [filters]
+  );
 
   return (
-    <div className="filters-bar glass-panel">
+    <div className="filters-bar glass-panel" role="search" aria-label="Filter expenses">
       <div className="filters-left">
-        <select name="category" value={filters.category} onChange={handleChange}>
+        <label htmlFor="category-filter" className="visually-hidden">
+          Filter by category
+        </label>
+        <select 
+          id="category-filter"
+          name="category" 
+          value={filters.category} 
+          onChange={handleChange}
+          className="filter-select"
+        >
           {CATEGORIES.map((cat) => (
             <option key={cat} value={cat}>
               {cat === 'All' ? 'All Categories' : cat}
@@ -23,27 +42,42 @@ export default function Filters({ filters, onChange }) {
           ))}
         </select>
 
+        <label htmlFor="start-date" className="visually-hidden">
+          Start date
+        </label>
         <input
+          id="start-date"
           type="date"
           name="startDate"
           value={filters.startDate}
           onChange={handleChange}
-          title="Start date"
+          className="filter-date"
+          aria-label="Start date"
         />
 
-        <span style={{ color: 'rgba(255,255,255,0.3)' }}>—</span>
+        <span className="date-separator" aria-hidden="true">—</span>
 
+        <label htmlFor="end-date" className="visually-hidden">
+          End date
+        </label>
         <input
+          id="end-date"
           type="date"
           name="endDate"
           value={filters.endDate}
           onChange={handleChange}
-          title="End date"
+          className="filter-date"
+          aria-label="End date"
         />
       </div>
 
       {hasFilters && (
-        <button className="btn-clear" onClick={handleClear}>
+        <button 
+          type="button"
+          className="btn-clear" 
+          onClick={handleClear}
+          aria-label="Clear all filters"
+        >
           Clear Filters
         </button>
       )}

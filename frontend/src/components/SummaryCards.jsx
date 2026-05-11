@@ -1,6 +1,24 @@
+/**
+ * SummaryCards Component - Displays expense statistics
+ * Refactored with accessibility improvements
+ */
 export default function SummaryCards({ summary }) {
   // Robust check for summary data presence
-  if (!summary || typeof summary.totalAll === 'undefined') return null;
+  if (!summary || typeof summary.totalAll === 'undefined') {
+    return (
+      <div className="summary-cards" role="region" aria-label="Loading summary statistics">
+        <div className="summary-card glass-panel loading-card" aria-busy="true">
+          <span className="visually-hidden">Loading statistics...</span>
+        </div>
+        <div className="summary-card glass-panel loading-card" aria-busy="true">
+          <span className="visually-hidden">Loading statistics...</span>
+        </div>
+        <div className="summary-card glass-panel loading-card" aria-busy="true">
+          <span className="visually-hidden">Loading statistics...</span>
+        </div>
+      </div>
+    );
+  }
 
   const cards = [
     {
@@ -44,10 +62,26 @@ export default function SummaryCards({ summary }) {
   ];
 
   return (
-    <div className="summary-cards">
+    <div className="summary-cards" role="region" aria-label="Expense summary statistics">
       {cards.map((card) => (
-        <div key={card.label} className="summary-card glass-panel" style={{ '--accent': card.color }}>
-          <div className="summary-card-icon" style={{ color: card.color, borderColor: card.color, background: `${card.color}15` }}>
+        <div 
+          key={card.label} 
+          className="summary-card glass-panel" 
+          style={{ '--accent': card.color }}
+          tabIndex={0}
+          role="article"
+          aria-label={`${card.label}: ${card.value}`}
+        >
+          <div 
+            className="summary-card-icon" 
+            style={{ 
+              color: card.color, 
+              borderColor: card.color, 
+              background: `${card.color}15`,
+              boxShadow: `inset 0 0 20px ${card.color}10`
+            }}
+            aria-hidden="true"
+          >
             {card.icon}
           </div>
           <div className="summary-card-info">

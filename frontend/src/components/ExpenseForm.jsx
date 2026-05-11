@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { createExpense } from '../api';
 
 const CATEGORIES = ['Food', 'Travel', 'Coffee', 'Books', 'Other'];
 
+/**
+ * ExpenseForm Component - Form for adding new expenses
+ * Refactored with improved UX, accessibility, and error handling
+ */
 export default function ExpenseForm({ onExpenseAdded }) {
   const [form, setForm] = useState({
     title: '',
@@ -14,24 +18,54 @@ export default function ExpenseForm({ onExpenseAdded }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [touched, setTouched] = useState({});
 
-  const validate = () => {
+  // Memoized validation
+  const validationErrors = useMemo(() => {
+    const newErrors = {};
+    if (touched.title && !form.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    if (touched.amount && (!form.amount || isNaN(form.amount) || Number(form.amount) <= 0)) {
+      newErrors.amount = 'Enter a valid amount > 0';
+    }
+    if (touched.category && !form.category) {
+      newErrors.category = 'Select a category';
+    }
+    return newErrors;
+  }, [form, touched]);
+
+  // Update errors when validation changes
+  useEffect(() => {
+    setErrors(validationErrors);
+  }, [validationErrors]);
+
+  const validate = useCallback(() => {
+    // Mark all fields as touched
+    setTouched({ title: true, amount: true, category: true, description: true, date: true });
+    
     const newErrors = {};
     if (!form.title.trim()) newErrors.title = 'Title is required';
-    if (!form.amount || isNaN(form.amount) || Number(form.amount) <= 0)
+    if (!form.amount || isNaN(form.amount) || Number(form.amount) <= 0) {
       newErrors.amount = 'Enter a valid amount > 0';
+    }
     if (!form.category) newErrors.category = 'Select a category';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [form]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
-  };
+    // Mark field as touched
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  }, [errors]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -48,6 +82,7 @@ export default function ExpenseForm({ onExpenseAdded }) {
         description: '',
         date: new Date().toISOString().split('T')[0],
       });
+      setTouched({});
       setErrors({});
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2500);
@@ -58,7 +93,7 @@ export default function ExpenseForm({ onExpenseAdded }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [form, validate, onExpenseAdded]);
 
   return (
     <div className="expense-form-card glass-panel">
@@ -79,7 +114,7 @@ export default function ExpenseForm({ onExpenseAdded }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate aria-label="Add new expense">
         <div className="form-row">
           <div className="form-group">
             <input
@@ -155,8 +190,18 @@ export default function ExpenseForm({ onExpenseAdded }) {
           <label htmlFor="description" className="input-label">Description (Optional)</label>
         </div>
 
-        <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Expense'}
+        <button 
+          type="submit" 
+          className="btn-primary" 
+          disabled={loading}
+          aria-busy={loading}
+        >
+          {loading ? (
+            <>
+              <span className="sr-only">Adding expense...</span>
+              Adding...
+            </>
+          ) : 'Add Expense'}
         </button>
       </form>
     </div>

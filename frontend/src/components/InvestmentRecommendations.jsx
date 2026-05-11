@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const STOCKS = [
   { name: 'Reliance Industries', returnPct: 25, risk: 'Medium Risk' },
