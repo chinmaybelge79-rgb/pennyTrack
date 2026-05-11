@@ -5,6 +5,8 @@ import ExpenseList from './components/ExpenseList';
 import SummaryCards from './components/SummaryCards';
 import CategoryChart from './components/CategoryChart';
 import Filters from './components/Filters';
+import SavingsPlanner from './components/SavingsPlanner';
+import InvestmentRecommendations from './components/InvestmentRecommendations';
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
@@ -105,6 +107,9 @@ export default function App() {
           </header>
 
           <SummaryCards summary={summary} />
+
+          <SavingsPlanner />
+          <InvestmentRecommendations />
 
           <div className="content-grid">
             <div className="sidebar">

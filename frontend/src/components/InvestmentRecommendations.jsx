@@ -107,7 +107,7 @@ export default function InvestmentRecommendations() {
             <div 
               key={stock.name} 
               className="glass-panel stock-card" 
-              style={{ animationDelay: \`\${index * 0.1}s\` }}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
                 <div>
@@ -120,7 +120,7 @@ export default function InvestmentRecommendations() {
                     fontWeight: '600', 
                     background: colors.bg, 
                     color: colors.text,
-                    border: \`1px solid \${colors.border}\`
+                    border: `1px solid ${colors.border}`
                   }}>
                     {stock.risk}
                   </span>
@@ -140,15 +140,23 @@ export default function InvestmentRecommendations() {
               <div style={{ marginBottom: '20px', height: '40px', display: 'flex', alignItems: 'center' }}>
                 <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 40">
                   <path 
-                    d={stock.returnPct > 30 ? "M0,40 Q20,30 40,35 T80,15 T100,5" : "M0,40 Q25,35 50,25 T100,10"} 
+                    d={stock.returnPct < 0 
+                        ? "M0,10 Q25,15 50,25 T100,40" 
+                        : stock.returnPct > 30 
+                          ? "M0,40 Q20,30 40,35 T80,15 T100,5" 
+                          : "M0,40 Q25,35 50,25 T100,10"} 
                     fill="none" 
-                    stroke="rgba(16, 185, 129, 0.5)" 
+                    stroke={stock.returnPct < 0 ? "rgba(239, 68, 68, 0.5)" : "rgba(16, 185, 129, 0.5)"} 
                     strokeWidth="3" 
                     className="trend-line"
                   />
                   <path 
-                    d={stock.returnPct > 30 ? "M0,40 Q20,30 40,35 T80,15 T100,5 L100,40 L0,40 Z" : "M0,40 Q25,35 50,25 T100,10 L100,40 L0,40 Z"} 
-                    fill="url(#gradientGreen)" 
+                    d={stock.returnPct < 0 
+                        ? "M0,10 Q25,15 50,25 T100,40 L100,40 L0,40 Z" 
+                        : stock.returnPct > 30 
+                          ? "M0,40 Q20,30 40,35 T80,15 T100,5 L100,40 L0,40 Z" 
+                          : "M0,40 Q25,35 50,25 T100,10 L100,40 L0,40 Z"} 
+                    fill={stock.returnPct < 0 ? "url(#gradientRed)" : "url(#gradientGreen)"} 
                     stroke="none"
                     style={{ animation: 'fadeIn 1s ease-out 0.5s forwards', opacity: 0 }}
                   />
@@ -156,6 +164,10 @@ export default function InvestmentRecommendations() {
                     <linearGradient id="gradientGreen" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stopColor="rgba(16, 185, 129, 0.2)" />
                       <stop offset="100%" stopColor="rgba(16, 185, 129, 0)" />
+                    </linearGradient>
+                    <linearGradient id="gradientRed" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(239, 68, 68, 0.2)" />
+                      <stop offset="100%" stopColor="rgba(239, 68, 68, 0)" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -167,9 +179,9 @@ export default function InvestmentRecommendations() {
                   <span style={{ color: '#fff', fontWeight: '500' }}>₹{annualInvestment.toLocaleString('en-IN')}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.05rem', fontWeight: '600' }}>
-                  <span style={{ color: '#10b981' }}>Est. Return:</span>
-                  <span style={{ color: '#10b981', textShadow: '0 0 10px rgba(16, 185, 129, 0.3)' }}>
-                    +₹{estimatedReturn.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                  <span style={{ color: stock.returnPct < 0 ? '#ef4444' : '#10b981' }}>Est. Return:</span>
+                  <span style={{ color: stock.returnPct < 0 ? '#ef4444' : '#10b981', textShadow: stock.returnPct < 0 ? '0 0 10px rgba(239, 68, 68, 0.3)' : '0 0 10px rgba(16, 185, 129, 0.3)' }}>
+                    {stock.returnPct < 0 ? '-' : '+'}₹{Math.abs(estimatedReturn).toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
               </div>

@@ -45,6 +45,12 @@ export default function SavingsPlanner() {
 
   return (
     <div className="glass-panel savings-planner-card" style={{ marginBottom: '32px', padding: '36px 32px', borderRadius: '24px' }}>
+      <style>{`
+        .savings-planner-card .input-field:focus {
+          border-color: #10b981 !important;
+          box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2) !important;
+        }
+      `}</style>
       <div className="form-header">
         <h2 style={{ background: 'linear-gradient(135deg, #10b981, #34d399)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '1.8rem', marginBottom: '8px' }}>
           Savings Goal Planner
