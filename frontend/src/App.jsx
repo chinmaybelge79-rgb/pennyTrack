@@ -48,7 +48,14 @@ export default function App() {
 
   return (
     <div className="scroll-container">
-      {/* ── 1. Guide Section ── */}
+      {/* ── 1. Expense Calculator ── */}
+      <section className="scroll-section tracker-section" style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="app">
+          <SummaryCards summary={summary} />
+        </div>
+      </section>
+
+      {/* ── 2. Format Guide ── */}
       <section className="scroll-section guide-section">
         <div className="guide-content">
           <h1>PennyTrack</h1>
@@ -87,7 +94,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* ── 2. Tracker Section ── */}
+      {/* ── 3. Expense Tracker ── */}
       <section className="scroll-section tracker-section">
         <div className="app">
           <header className="app-header">
@@ -105,11 +112,6 @@ export default function App() {
               </div>
             </div>
           </header>
-
-          <SummaryCards summary={summary} />
-
-          <SavingsPlanner />
-          <InvestmentRecommendations />
 
           <div className="content-grid">
             <div className="sidebar">
@@ -132,7 +134,21 @@ export default function App() {
         </div>
       </section>
 
-      {/* ── 3. Footer Signature Section ── */}
+      {/* ── 4. Savings Goal Calculator ── */}
+      <section className="scroll-section tracker-section" style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="app">
+          <SavingsPlanner />
+        </div>
+      </section>
+
+      {/* ── 5. Stocks ── */}
+      <section className="scroll-section tracker-section" style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="app">
+          <InvestmentRecommendations />
+        </div>
+      </section>
+
+      {/* ── 6. Footer Signature Section ── */}
       <section className="scroll-section footer-section" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <h2 style={{ color: '#ffffff', fontSize: '2rem', fontWeight: '500', letterSpacing: '2px' }}>
           Made by Chinmay
